@@ -29,16 +29,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //listView = findViewById(R.id.listViewHeroes);
+        //initialize the recycler view
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        getHeroes();
+        loadHeroes();
 
     }
 
-    private void getHeroes(){
+    private void loadHeroes(){
         //create retrofit object
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Api.BASE_URL)
@@ -70,8 +70,6 @@ public class MainActivity extends AppCompatActivity {
                 for (int i = 0; i < heroesList.size(); i++) {
                     heroes[i] = heroesList.get(i).getName();
                 }
-
-
 
                 heroAdapter = new HeroAdapter(heroesList, getApplicationContext());
                 recyclerView.setAdapter(heroAdapter);
