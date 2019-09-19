@@ -37,10 +37,18 @@ public class MainActivity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
+        //build our API
         Api api = retrofit.create(Api.class);
 
-        //call the API
+        //now making the call object
+        //Here we are using the api method that we created inside the api interface
         Call<List<HeroModel>> call = api.getHeroes();
+
+        //then finallly we are making the call using enqueue()
+        //it takes callback interface as an argument
+        //and callback is having two methods onRespnose() and onFailure
+        //if the request is successfull we will get the correct response and onResponse will be executed
+        //if there is some error we will get inside the onFailure() method
 
         call.enqueue(new Callback<List<HeroModel>>() {
             @Override
@@ -56,20 +64,24 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 //displaying the string array into listview
-                listView.setAdapter(new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, heroes));
+                listView.setAdapter(
+                        new ArrayAdapter<String>(
+                                getApplicationContext(),
+                                android.R.layout.simple_list_item_1,
+                                heroes));
 
 
-//                for(HeroModel h: heroesList){
-//                    Log.d("name", h.getName());
-//                    Log.d("real name", h.getRealname());
-//                    Log.d("team", h.getTeam());
-//                    Log.d("firstappearance", h.getFirstappearance());
-//                    Log.d("createdby", h.getCreatedby());
-//                    Log.d("publisher", h.getPublisher());
-//                    Log.d("imageurl", h.getImageurl());
-//                    Log.d("bio", h.getBio());
-//
-//                }
+                for(HeroModel h: heroesList){
+                    Log.d("name", h.getName());
+                    Log.d("real name", h.getRealname());
+                    Log.d("team", h.getTeam());
+                    Log.d("firstappearance", h.getFirstappearance());
+                    Log.d("createdby", h.getCreatedby());
+                    Log.d("publisher", h.getPublisher());
+                    Log.d("imageurl", h.getImageurl());
+                    Log.d("bio", h.getBio());
+
+                }
 
             }
 
