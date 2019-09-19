@@ -71,30 +71,24 @@ public class MainActivity extends AppCompatActivity {
                     heroes[i] = heroesList.get(i).getName();
                 }
 
-                //displaying the string array into listview
-//                heroesList.setAdapter(
-////                        new ArrayAdapter<String>(
-////                                getApplicationContext(),
-////                                android.R.layout.simple_list_item_1,
-////                                heroes));
-
 
 
                 heroAdapter = new HeroAdapter(heroesList, getApplicationContext());
                 recyclerView.setAdapter(heroAdapter);
 
+                //Code to see what the API returns
 
-                for(HeroModel h: heroesList){
-                    Log.d("name", h.getName());
-                    Log.d("real name", h.getRealname());
-                    Log.d("team", h.getTeam());
-                    Log.d("firstappearance", h.getFirstappearance());
-                    Log.d("createdby", h.getCreatedby());
-                    Log.d("publisher", h.getPublisher());
-                    Log.d("imageurl", h.getImageurl());
-                    Log.d("bio", h.getBio());
-
-                }
+//                for(HeroModel h: heroesList){
+//                    Log.d("name", h.getName());
+//                    Log.d("real name", h.getRealname());
+//                    Log.d("team", h.getTeam());
+//                    Log.d("firstappearance", h.getFirstappearance());
+//                    Log.d("createdby", h.getCreatedby());
+//                    Log.d("publisher", h.getPublisher());
+//                    Log.d("imageurl", h.getImageurl());
+//                    Log.d("bio", h.getBio());
+//
+//                }
 
             }
 
