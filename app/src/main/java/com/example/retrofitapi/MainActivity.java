@@ -2,6 +2,8 @@ package com.example.retrofitapi;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -17,14 +19,20 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
-    ListView listView;
+   // ListView listView;
+    RecyclerView recyclerView;
+    HeroAdapter heroAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        listView = findViewById(R.id.listViewHeroes);
+        //listView = findViewById(R.id.listViewHeroes);
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         getHeroes();
 
@@ -64,11 +72,16 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 //displaying the string array into listview
-                listView.setAdapter(
-                        new ArrayAdapter<String>(
-                                getApplicationContext(),
-                                android.R.layout.simple_list_item_1,
-                                heroes));
+//                heroesList.setAdapter(
+////                        new ArrayAdapter<String>(
+////                                getApplicationContext(),
+////                                android.R.layout.simple_list_item_1,
+////                                heroes));
+
+
+
+                heroAdapter = new HeroAdapter(heroesList, getApplicationContext());
+                recyclerView.setAdapter(heroAdapter);
 
 
                 for(HeroModel h: heroesList){
