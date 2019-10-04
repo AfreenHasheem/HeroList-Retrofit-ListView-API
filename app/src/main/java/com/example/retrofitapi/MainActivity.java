@@ -1,5 +1,7 @@
 package com.example.retrofitapi;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
    // ListView listView;
     RecyclerView recyclerView;
     HeroAdapter heroAdapter;
+    ConnectionDetector mConnectionDetector;
 
 
     @Override
@@ -34,7 +37,15 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        loadHeroes();
+        mConnectionDetector = new ConnectionDetector(getApplicationContext());
+
+        if (mConnectionDetector.isConnectingToInternet() == false) {
+            Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show();
+        } else {
+            loadHeroes();
+        }
+
+
 
     }
 
@@ -95,6 +106,8 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
 
             }
+
+
         });
     }
 }
