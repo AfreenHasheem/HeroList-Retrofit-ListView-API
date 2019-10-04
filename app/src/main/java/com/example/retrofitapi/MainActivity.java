@@ -1,18 +1,12 @@
 package com.example.retrofitapi;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
+import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
-
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -25,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     HeroAdapter heroAdapter;
     ConnectionDetector mConnectionDetector;
+    ProgressDialog progressDialog;
 
 
     @Override
@@ -39,14 +34,13 @@ public class MainActivity extends AppCompatActivity {
 
         mConnectionDetector = new ConnectionDetector(getApplicationContext());
 
-        if (mConnectionDetector.isConnectingToInternet() == false) {
+        if (!mConnectionDetector.isConnectingToInternet()) {
             Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show();
+
+
         } else {
             loadHeroes();
         }
-
-
-
     }
 
     private void loadHeroes(){
@@ -69,6 +63,16 @@ public class MainActivity extends AppCompatActivity {
         //if the request is successfull we will get the correct response and onResponse will be executed
         //if there is some error we will get inside the onFailure() method
 
+
+        progressDialog = new ProgressDialog(MainActivity.this);
+        progressDialog.setMax(100);
+        progressDialog.setMessage("Its loading....");
+        progressDialog.setTitle("ProgressDialog bar example");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        // show it
+        progressDialog.show();
+
+
         call.enqueue(new Callback<List<HeroModel>>() {
             @Override
             public void onResponse(Call<List<HeroModel>> call, Response<List<HeroModel>> response) {
@@ -85,29 +89,16 @@ public class MainActivity extends AppCompatActivity {
                 heroAdapter = new HeroAdapter(heroesList, getApplicationContext());
                 recyclerView.setAdapter(heroAdapter);
 
-                //Code to see what the API returns
-
-//                for(HeroModel h: heroesList){
-//                    Log.d("name", h.getName());
-//                    Log.d("real name", h.getRealname());
-//                    Log.d("team", h.getTeam());
-//                    Log.d("firstappearance", h.getFirstappearance());
-//                    Log.d("createdby", h.getCreatedby());
-//                    Log.d("publisher", h.getPublisher());
-//                    Log.d("imageurl", h.getImageurl());
-//                    Log.d("bio", h.getBio());
-//
-//                }
+                progressDialog.dismiss();
 
             }
 
             @Override
             public void onFailure(Call<List<HeroModel>> call, Throwable t) {
                 Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
 
             }
-
-
         });
     }
 }
