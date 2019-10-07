@@ -1,12 +1,21 @@
 package com.example.retrofitapi;
 
 import android.app.ProgressDialog;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.Toast;
+
+import java.io.IOException;
 import java.util.List;
+
+import okhttp3.Cache;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -20,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     HeroAdapter heroAdapter;
     ConnectionDetector mConnectionDetector;
     ProgressDialog progressDialog;
+    int cacheSize = 10 * 1024 * 1024; // 10 MiB
 
 
     @Override
@@ -34,8 +44,10 @@ public class MainActivity extends AppCompatActivity {
 
         mConnectionDetector = new ConnectionDetector(getApplicationContext());
 
+
         if (!mConnectionDetector.isConnectingToInternet()) {
             Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show();
+            loadHeroes();
 
 
         } else {
@@ -44,9 +56,39 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadHeroes(){
+
+        try{
+            if (Api.BASE_URL.isEmpty()){
+                Toast.makeText(getApplicationContext(), "Please obtain API Key firstly from themoviedb.org", Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
+                return;
+        }
+
+            Cache cache = new Cache(getCacheDir(), cacheSize);
+            OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                    .cache(cache)
+                    .addInterceptor(new Interceptor() {
+                        @Override
+                        public okhttp3.Response intercept(Interceptor.Chain chain) throws IOException {
+                            Request request = chain.request();
+                            if (!mConnectionDetector.isConnectingToInternet()){
+                                int maxStale = 60 * 60 * 24 * 28; // tolerate 4-weeks stale \
+                                request = request
+                                        .newBuilder()
+                                        .header("Cache-Control", "public, only-if-cached, max-stale=" + maxStale)
+                                        .build();
+                            }
+
+                            return chain.proceed(request);
+                        }
+                    })
+                    .build();
+
+
         //create retrofit object
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Api.BASE_URL)
+                .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -100,6 +142,10 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }catch (Exception e){
+            Log.d("Error", e.getMessage());
+            Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+        }
     }
 }
 
